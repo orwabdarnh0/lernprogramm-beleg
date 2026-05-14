@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lernprogramm PWA</title>
+
+  <link rel="manifest" href="manifest.json" />
+  <link rel="stylesheet" href="css/style.css" />
+
+  <!-- KaTeX für Mathematik -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js"></script>
+</head>
+<body>
+  <header class="app-header">
+    <h1>Lernprogramm</h1>
+    <p>Webbasiertes Quiz als Progressive Web App</p>
+  </header>
+
+  <main class="layout">
+    <section class="card quiz-card">
+      <div class="toolbar">
+        <label>
+          Kategorie:
+          <select id="category">
+            <option value="web">Webtechnologien</option>
+            <option value="mathe">Mathematik</option>
+            <option value="noten">Noten lernen</option>
+            <option value="allgemein">Allgemein</option>
+            <option value="rest">REST-API</option>
+          </select>
+        </label>
+
+        <button id="startBtn">Neu starten</button>
+      </div>
+
+      <div class="progress-row">
+        <div class="progress">
+          <div id="progressFill" class="progress-fill"></div>
+        </div>
+        <span id="progressText">0 / 0</span>
+      </div>
+
+      <div class="question-box">
+        <p id="categoryInfo" class="category-info"></p>
+        <h2 id="question">Bitte Kategorie wählen und starten.</h2>
+      </div>
+
+      <div id="answers" class="answers"></div>
+
+      <p id="feedback" class="feedback"></p>
+
+      <button id="nextBtn" class="primary hidden">Nächste Frage</button>
+    </section>
+
+    <aside class="card sidebar">
+      <h2>Statistik</h2>
+      <p>Richtig: <strong id="rightCount">0</strong></p>
+      <p>Falsch: <strong id="wrongCount">0</strong></p>
+      <p>Aktuelle Kategorie: <strong id="currentCategory">-</strong></p>
+    </aside>
+
+    <section id="resultScreen" class="card result hidden">
+      <h2>Durchlauf beendet</h2>
+      <p id="finalScore"></p>
+      <button onclick="location.reload()" class="primary">Nochmal starten</button>
+    </section>
+  </main>
+
+  <footer>
+    <p>Beleg Webprogrammierung – HTML5, CSS3, JavaScript, JSON, REST, PWA</p>
+  </footer>
+
+  <script src="js/app.js"></script>
+</body>
+</html>

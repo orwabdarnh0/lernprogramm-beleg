@@ -5,6 +5,14 @@ const REST_USER = 's88439@htw-dresden.de';
 const REST_PASSWORD = 'PUT_PASSWORD_HERE';
 const QUESTIONS_PER_ROUND = 5;
 
+function authHeader() {
+  const token = btoa(`${REST_USER}:${REST_PASSWORD}`);
+  return {
+    'Authorization': `Basic ${token}`,
+    'Accept': 'application/json'
+  };
+}
+
 let localQuestions = {};
 let quizData = [];
 let currentIndex = 0;
@@ -65,12 +73,18 @@ async function startQuiz() {
 
 async function loadRestQuestions() {
   try {
-    const response = await fetch(REST_URL);
+    const response = await fetch(REST_URL, {
+      method: 'GET',
+      headers: authHeader()
+    });
+
     if (!response.ok) {
-      throw new Error('REST-Server antwortet nicht korrekt.');
+      throw new Error(`REST-Server antwortet nicht korrekt: ${response.status}`);
     }
 
     const data = await response.json();
+    console.log('REST data:', data);
+
     const normalized = normalizeRestData(data);
 
     if (normalized.length === 0) {
@@ -82,7 +96,7 @@ async function loadRestQuestions() {
     console.warn(error);
     return [
       {
-        a: 'REST-API konnte nicht geladen werden. Was bedeutet REST?',
+        a: 'Was bedeutet REST?',
         l: ['Representational State Transfer', 'Remote Easy Style Text', 'Random Server Test', 'Real Script Transfer']
       },
       {
@@ -94,7 +108,7 @@ async function loadRestQuestions() {
 }
 
 function normalizeRestData(data) {
-  const list = Array.isArray(data) ? data : (data.quizzes || data.items || data.data || []);
+  const list = Array.isArray(data) ? data : (data.content || data.quizzes || data.items || data.data || []);
 
   return list.map(item => {
     const question =
@@ -115,6 +129,7 @@ function normalizeRestData(data) {
     if (answers.length > 0 && typeof answers[0] === 'object') {
       const correctAnswer = answers.find(a => a.correct === true || a.isCorrect === true);
       const answerTexts = answers.map(a => a.text || a.answer || a.value || String(a));
+
       if (correctAnswer) {
         const correctText = correctAnswer.text || correctAnswer.answer || correctAnswer.value;
         answers = [correctText, ...answerTexts.filter(a => a !== correctText)];

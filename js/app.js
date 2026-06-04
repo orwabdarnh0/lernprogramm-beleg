@@ -2,7 +2,7 @@
 
 const REST_URL = 'https://idefix.informatik.htw-dresden.de:8888/api/quizzes?page=100';
 const REST_USER = 's88439@htw-dresden.de';
-const REST_PASSWORD = 'PUT_PASSWORD_HERE';
+const REST_PASSWORD = 'quizapp';
 const QUESTIONS_PER_ROUND = 5;
 
 function authHeader() {

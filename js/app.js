@@ -1,8 +1,8 @@
 'use strict';
 
-const REST_URL = 'https://idefix.informatik.htw-dresden.de:8888/api/quizzes?page=100';
-const REST_USER = 's88439@htw-dresden.de';
-const REST_PASSWORD = 'quizapp';
+const REST_URL = 'https://idefix.informatik.htw-dresden.de:8888/api/quizzes?page=0';
+const REST_USER = 's88439quiz@htw-dresden.de';
+const REST_PASSWORD = 'quizapp88439';
 const QUESTIONS_PER_ROUND = 5;
 
 function authHeader() {
@@ -53,6 +53,7 @@ async function startQuiz() {
   right = 0;
   wrong = 0;
   answered = false;
+
   resultScreen.classList.add('hidden');
   document.querySelector('.quiz-card').classList.remove('hidden');
   updateStats();
@@ -94,6 +95,7 @@ async function loadRestQuestions() {
     return shuffle(normalized).slice(0, QUESTIONS_PER_ROUND);
   } catch (error) {
     console.warn(error);
+
     return [
       {
         a: 'Was bedeutet REST?',
@@ -108,43 +110,31 @@ async function loadRestQuestions() {
 }
 
 function normalizeRestData(data) {
-  const list = Array.isArray(data) ? data : (data.content || data.quizzes || data.items || data.data || []);
+  const list = Array.isArray(data)
+    ? data
+    : (data.content || data.quizzes || data.items || data.data || []);
 
   return list.map(item => {
     const question =
+      item.text ||
       item.question ||
       item.title ||
-      item.text ||
       item.a ||
       item.prompt ||
       'Externe Aufgabe';
 
-    let answers =
+    const answers =
       item.answers ||
       item.options ||
       item.choices ||
       item.l ||
       [];
 
-    if (answers.length > 0 && typeof answers[0] === 'object') {
-      const correctAnswer = answers.find(a => a.correct === true || a.isCorrect === true);
-      const answerTexts = answers.map(a => a.text || a.answer || a.value || String(a));
-
-      if (correctAnswer) {
-        const correctText = correctAnswer.text || correctAnswer.answer || correctAnswer.value;
-        answers = [correctText, ...answerTexts.filter(a => a !== correctText)];
-      } else {
-        answers = answerTexts;
-      }
-    }
-
-    if (item.correctAnswer && !answers.includes(item.correctAnswer)) {
-      answers.unshift(item.correctAnswer);
-    }
-
     return {
+      id: item.id || null,
       a: String(question),
-      l: answers.map(String).slice(0, 4)
+      l: answers.map(String).slice(0, 4),
+      source: 'rest'
     };
   }).filter(q => q.l.length >= 4);
 }
@@ -164,12 +154,16 @@ function showQuestion() {
   const q = quizData[currentIndex];
 
   renderQuestion(q.a);
-  const answers = shuffle([...q.l]);
 
-  answers.forEach(answer => {
+  const answers = q.l.map((text, index) => ({
+    text,
+    index
+  }));
+
+  shuffle(answers).forEach(answerObj => {
     const button = document.createElement('button');
-    button.textContent = answer;
-    button.addEventListener('click', () => checkAnswer(button, answer, q.l[0]));
+    button.textContent = answerObj.text;
+    button.addEventListener('click', () => checkAnswer(button, answerObj, q));
     answersEl.appendChild(button);
   });
 
@@ -185,29 +179,75 @@ function renderQuestion(text) {
   }
 }
 
-function checkAnswer(button, answer, correct) {
+async function solveRestQuestion(questionId, selectedIndex) {
+  const response = await fetch(
+    `https://idefix.informatik.htw-dresden.de:8888/api/quizzes/${questionId}/solve`,
+    {
+      method: 'POST',
+      headers: {
+        ...authHeader(),
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify([selectedIndex])
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error(`Solve fehlgeschlagen: ${response.status}`);
+  }
+
+  return await response.json();
+}
+
+async function checkAnswer(button, answerObj, question) {
   if (answered) return;
   answered = true;
 
   const buttons = answersEl.querySelectorAll('button');
+  buttons.forEach(btn => btn.disabled = true);
 
-  buttons.forEach(btn => {
-    btn.disabled = true;
-    if (btn.textContent === correct) {
-      btn.classList.add('correct');
+  if (question.source === 'rest' && question.id !== null) {
+    try {
+      const result = await solveRestQuestion(question.id, answerObj.index);
+
+      if (result.success) {
+        right++;
+        button.classList.add('correct');
+        feedbackEl.textContent = result.feedback || 'Richtig!';
+        feedbackEl.classList.add('ok');
+      } else {
+        wrong++;
+        button.classList.add('wrong');
+        feedbackEl.textContent = result.feedback || 'Falsch!';
+        feedbackEl.classList.add('bad');
+      }
+    } catch (error) {
+      wrong++;
+      button.classList.add('wrong');
+      feedbackEl.textContent = 'Fehler bei der Serverprüfung.';
+      feedbackEl.classList.add('bad');
+      console.warn(error);
     }
-  });
-
-  if (answer === correct) {
-    right++;
-    button.classList.add('correct');
-    feedbackEl.textContent = 'Richtig!';
-    feedbackEl.classList.add('ok');
   } else {
-    wrong++;
-    button.classList.add('wrong');
-    feedbackEl.textContent = `Falsch! Richtige Antwort: ${correct}`;
-    feedbackEl.classList.add('bad');
+    const correct = question.l[0];
+
+    buttons.forEach(btn => {
+      if (btn.textContent === correct) {
+        btn.classList.add('correct');
+      }
+    });
+
+    if (answerObj.text === correct) {
+      right++;
+      button.classList.add('correct');
+      feedbackEl.textContent = 'Richtig!';
+      feedbackEl.classList.add('ok');
+    } else {
+      wrong++;
+      button.classList.add('wrong');
+      feedbackEl.textContent = `Falsch! Richtige Antwort: ${correct}`;
+      feedbackEl.classList.add('bad');
+    }
   }
 
   updateStats();
@@ -228,8 +268,10 @@ function updateStats() {
 function showResult() {
   document.querySelector('.quiz-card').classList.add('hidden');
   resultScreen.classList.remove('hidden');
+
   document.getElementById('finalScore').textContent =
     `Du hast ${right} von ${quizData.length} Fragen richtig beantwortet.`;
+
   progressFill.style.width = '100%';
 }
 

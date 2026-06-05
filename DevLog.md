@@ -78,10 +78,70 @@
 
 ---
 
-## Offene Punkte
+---
 
-- Upload auf GitHub
-- Upload auf HTW-Webserver
-- Videoaufnahme für Belegvorstellung
-- Abschlusskontrolle der REST-API
-- ZIP-Datei für Abgabe erstellen
+## 17.05.2026 (4h)
+
+* REST-API weiter ausgebaut
+* Erste Tests mit dem externen Aufgabenserver durchgeführt
+* Datenformat der API analysiert
+* Fehler bei der Verarbeitung der Antworten untersucht
+* Anzeige der REST-Aufgaben verbessert
+
+---
+
+## 20.05.2026 (4h)
+
+* Weitere Quizfragen für die Kategorien ergänzt
+* Darstellung der Statistik verbessert
+* Fehler bei der Fortschrittsanzeige behoben
+* Responsive Design auf verschiedenen Geräten getestet
+* Code aufgeräumt und Kommentare ergänzt
+
+---
+
+## 24.05.2026 (3h)
+
+* Service Worker überarbeitet
+* Cache-Verhalten optimiert
+* Offline-Funktion erneut getestet
+* Manifest überprüft und angepasst
+* Installation als PWA getestet
+
+---
+
+## 28.05.2026 (4h)
+
+* Fehleranalyse bei der REST-API durchgeführt
+* Authentifizierung für den Aufgabenserver vorbereitet
+* Tests mit verschiedenen Browsern durchgeführt
+* Kleinere Darstellungsfehler behoben
+* README.md erweitert
+
+---
+
+## 04.06.2026 (5h)
+
+* Verbindung mit dem externen WebQuiz-Server erfolgreich hergestellt
+
+* Benutzerkonto für die REST-API erstellt und getestet
+
+* Basic Authentication implementiert
+
+* Externe Quizfragen per fetch() geladen
+
+* Fehler bei der REST-Anbindung analysiert und behoben
+
+* Darstellung der externen Fragen korrigiert
+
+* Offline-Modus erfolgreich getestet
+
+* Service Worker und Cache überprüft
+
+* PWA-Funktionalität abgeschlossen
+
+* Abschließende Tests aller Kategorien durchgeführt
+
+* Dokumentation ergänzt
+
+* Projekt für den Upload auf den HTW-Webserver vorbereitet

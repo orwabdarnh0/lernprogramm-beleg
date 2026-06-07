@@ -56,9 +56,11 @@ data/
 Die REST-API wird in `js/app.js` über folgende Konstante gesetzt:
 
 const REST_URL = 'https://idefix.informatik.htw-dresden.de:8888/api/quizzes/';
+
 Die Aufgaben werden per fetch() von der bereitgestellten WebQuiz-REST-API geladen.
 
-Die Auswertung der REST-Aufgaben erfolgt über den Endpoint `/solve`. Die ausgewählte Antwort wird an den Server gesendet und dort überprüft.
+Die Auswertung der REST-Aufgaben erfolgt über den Endpoint `/solve`.
+Die ausgewählte Antwort wird an den Server gesendet und dort überprüft.
 
 ---
 

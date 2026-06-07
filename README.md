@@ -56,20 +56,21 @@ data/
 Die REST-API wird in `js/app.js` über folgende Konstante gesetzt:
 
 const REST_URL = 'https://idefix.informatik.htw-dresden.de:8888/api/quizzes/';
+Die Aufgaben werden per fetch() von der bereitgestellten WebQuiz-REST-API geladen.
+
+Die Auswertung der REST-Aufgaben erfolgt über den Endpoint `/solve`. Die ausgewählte Antwort wird an den Server gesendet und dort überprüft.
 
 ---
 
-## Start lokal
+## Weblink
 
-Projektordner öffnen und mit Live Server starten.
+Die Anwendung wurde auf dem HTW-Webserver veröffentlicht und ist über folgenden Link erreichbar:
 
-Alternative mit Python:
+https://www2.htw-dresden.de/~s88439/Lernprogramm/
 
-python -m http.server 8000
+## Lokaler Start
 
-Dann im Browser öffnen:
-
-http://localhost:8000
+Für die lokale Entwicklung kann das Projekt mit Visual Studio Code (Live Server) oder alternativ mit einem lokalen Webserver gestartet werden.
 
 ---
 
@@ -94,3 +95,21 @@ Getestet mit Google Chrome / Chromium / Microsoft Edge.
 Bei der Erstellung wurde ChatGPT zur Unterstützung bei Strukturierung, Codeerstellung und Fehleranalyse verwendet.
 
 Der erzeugte Code wurde geprüft, angepasst und verstanden.
+
+
+
+## Repository
+
+GitHub Repository:
+https://github.com/orwabdarnh0/lernprogramm-beleg
+
+
+## Autor
+
+Name: Arwa Bdarneh
+
+S-Nummer: s88439
+
+Studiengang: informatik-2024
+
+
